@@ -1,0 +1,65 @@
+#root {
+    height: 100%;
+}
+
+/* sidebar css */
+.sidebar {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    row-gap: 2rem;
+    width: 15%;
+    height: 100%;
+    padding-block: .5rem;
+    /* padding-inline: .5rem; */
+
+    background: var(--dark-blue-200);
+
+}
+
+.sidebar .sidebar_top {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+}
+
+.sidebar .sidebar_top .sidebar_label {
+    font-size: 3rem;
+}
+
+.sidebar .projects {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: .5rem;
+
+}
+
+.sidebar .projects .project {
+    display: flex;
+    justify-content: center;
+
+    cursor: pointer;
+    padding-block: .5rem;
+    text-align: center;
+    width: 100%;
+    height: 4rem;
+    background: transparent;
+    color: var(--light);
+    transition-property: background, border-radius;
+    transition: 300ms ease;
+
+}
+
+.sidebar .projects .project:hover,
+.sidebar .projects .project.active {
+    background: var(--dark-blue-500);
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.sidebar .projects .project>button {
+    border: none;
+    background: transparent;
+}
