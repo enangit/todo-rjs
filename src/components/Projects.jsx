@@ -10,21 +10,21 @@ const Projects = ({ projects, selectedProjectId, handleSelectActiveProject }) =>
             {
                 projects && projects.map((project) => {
 
-                    if (project.id === selectedProjectId) {
+                    if (project.projectId === selectedProjectId) {
                         activeClass += " active"
                     } else {
                         activeClass = "project"
                     }
 
                     return <li
-                        key={project.id}
+                        key={project.projectId}
                         className={activeClass}
                         onClick={() => {
-                            handleSelectActiveProject(project.id)
+                            handleSelectActiveProject(project.projectId)
                         }}
                     >
                         <button>
-                            {project.title}
+                            {project.name}
                         </button>
                     </li>
                 })
