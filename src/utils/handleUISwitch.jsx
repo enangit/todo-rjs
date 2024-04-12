@@ -1,4 +1,3 @@
-
 import NoSelectedProject from "../components/NoSelectedProject";
 import SelectedProject from "../components/SelectedProject";
 import ProjectForm from '../components/ProjectForm';

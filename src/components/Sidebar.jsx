@@ -2,6 +2,7 @@ import Button from "./Button"
 import Projects from "./Projects"
 
 const Sidebar = ({ projects, selectedProjectId, handleSelectActiveProject, handleAddCreateProject}) => {
+
     return (
         <aside className="sidebar">
             <div className="sidebar_top">

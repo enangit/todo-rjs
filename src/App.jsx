@@ -7,28 +7,31 @@ import handleUISwitch from './utils/handleUISwitch'
 
 function App() {
 
+    const savedProjects = JSON.parse(localStorage.getItem("projects"))
+    const savedTasks = JSON.parse(localStorage.getItem("tasks"))
+
     const [projectState, setProjectState] = useState({
         selectedProjectId: 'not creating',
-        projects: JSON.parse(localStorage.getItem("projects")) || [],
-        tasks: JSON.parse(localStorage.getItem("tasks")) || [],
+        projects: savedProjects || [],
+        tasks: savedTasks || [],
     })
 
     //useEffect to save projects and tasks to a localtStorage || database
-    useEffect(() => {
 
+    useEffect(() => {
         function saveProjectToDatabase(projects) {
             localStorage.setItem("projects", JSON.stringify(projects))
         }
 
-        function saveTasksToDatabase(tasks) {
-            localStorage.setItem("projects", JSON.stringify(tasks))
-        }
-
         saveProjectToDatabase(projectState.projects)
+    }, [projectState.projects])
 
+    useEffect(() => {
+        function saveTasksToDatabase(tasks) {
+            localStorage.setItem("tasks", JSON.stringify(tasks))
+        }
         saveTasksToDatabase(projectState.tasks)
-
-    }, [projectState.projects, projectState.tasks])
+    }, [projectState.tasks])
 
     function handleAddCreateProject() {
         setProjectState(prevState => {
@@ -62,12 +65,11 @@ function App() {
                 selectedProjectId: 'not creating',
             }
         })
+
     }
 
     let selectedProject;
     let content;
-
-    selectedProject = projectState.projects.filter(project => project.projectId === projectState.selectedProjectId)[0]
 
     function handleSelectActiveProject(id) {
         setProjectState(prevState => {
@@ -77,6 +79,8 @@ function App() {
             }
         })
     }
+
+    selectedProject = projectState.projects.filter(project => project.projectId === projectState.selectedProjectId)[0]
 
     content = handleUISwitch(selectedProject, projectState, handleAddCreateProject, handleCreateProject)
 
