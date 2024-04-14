@@ -1,31 +1,42 @@
-const Projects = ({ projects, selectedProjectId, handleSelectActiveProject }) => {
+const Projects = ({ projects, selectedProjectId, handleSelectActiveProject, deleteProject }) => {
 
     let activeClass = "project"
 
     return (
         <ul role="list" className="projects">
 
-            {!projects && <> </>}
+            {!projects && <></>}
 
             {
                 projects && projects.map((project) => {
 
-                    if (project.projectId === selectedProjectId) {
+                    if (project.id === selectedProjectId) {
                         activeClass += " active"
                     } else {
                         activeClass = "project"
                     }
 
                     return <li
-                        key={project.projectId}
+                        id="project-li"
+                        key={project.id}
                         className={activeClass}
-                        onClick={() => {
-                            handleSelectActiveProject(project.projectId)
-                        }}
                     >
-                        <button>
+
+                        <p
+                            id="project-span"
+                            onClick={() => {
+                                handleSelectActiveProject(project.id)
+                            }}>
                             {project.name}
+                        </p>
+
+                        <button
+                            className="delete"
+                            onClick={deleteProject}
+                        >
+                            Del
                         </button>
+
                     </li>
                 })
             }

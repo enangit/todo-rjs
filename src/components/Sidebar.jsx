@@ -1,7 +1,7 @@
 import Button from "./Button"
 import Projects from "./Projects"
 
-const Sidebar = ({ projects, selectedProjectId, handleSelectActiveProject, handleAddCreateProject}) => {
+const Sidebar = ({ projects, selectedProjectId, handleSelectActiveProject, handleAddCreateProject, deleteProject }) => {
 
     return (
         <aside className="sidebar">
@@ -9,12 +9,15 @@ const Sidebar = ({ projects, selectedProjectId, handleSelectActiveProject, handl
                 <h1 className="sidebar_label">
                     Projects
                 </h1>
-                <Button buttonText={"Add Projects"} onClick={handleAddCreateProject}/>
+                <Button buttonText={"Add Projects"} onClick={handleAddCreateProject} />
             </div>
             <Projects
                 projects={projects}
                 selectedProjectId={selectedProjectId}
-                handleSelectActiveProject={handleSelectActiveProject} />
+                handleSelectActiveProject={handleSelectActiveProject}
+                deleteProject={deleteProject}
+            />
+
         </aside>
     )
 }

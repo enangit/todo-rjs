@@ -10,6 +10,7 @@
     --dark-blue-200: #222629;
     --light-blue-200: #474b4f;
     --light-blue-100: #6b6e70;
+    --light-blue-50: #a8a8a8;
     --light: #F1EEDC;
 }
 
@@ -57,8 +58,22 @@ button {
     transition-property: background;
     transition: 300ms ease-in-out;
     padding-block: .8rem;
+    padding-inline: .8rem;
 }
 
 .button:hover {
     background: var(--dark-green);
+}
+
+.button.cancel{
+    margin-inline-end: 1rem;
+    background: transparent;
+    color: var(--light);
+    border: 1px solid var(--light);
+    transition-property: background;
+    transition: 300ms ease-in-out;
+}
+
+.button.cancel:hover{
+    background: var(--light-green);
 }

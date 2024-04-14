@@ -3,7 +3,9 @@ import { useState, useEffect } from 'react'
 
 import './App.css'
 import Sidebar from './components/Sidebar'
-import handleUISwitch from './utils/handleUISwitch'
+import NoSelectedProject from "./components/NoSelectedProject";
+import SelectedProject from "./components/SelectedProject";
+import ProjectForm from './components/ProjectForm';
 
 function App() {
 
@@ -42,17 +44,26 @@ function App() {
         })
     }
 
-    function handleCreateProject(data) {
+    function cancelCreateProject() {
+        setProjectState(prevState => {
+            return {
+                ...prevState,
+                selectedProjectId: 'not creating',
+            }
+        })
+    }
 
-        let projectName = data.projectNameRef.current.value
-        let projectDescription = data.projectDescriptionRef.current.value
+    function handleCreateProject(inputEl) {
+
+        let projectName = inputEl.projectNameRef.current.value
+        let projectDescription = inputEl.projectDescriptionRef.current.value
 
         if (projectName === "" || projectDescription === "") {
             return
         }
 
         let newProject = {
-            projectId: (Math.random()).toString().slice(3, -1),
+            id: (Math.random()).toString().slice(3, -1),
             name: projectName,
             description: projectDescription,
             createdAt: new Date().toString(),
@@ -68,8 +79,53 @@ function App() {
 
     }
 
+    function addTask(inputRef) {
+
+        if (inputRef.current.value === "") return
+
+        const newTask = {
+            projectId: projectState.selectedProjectId,
+            id: (Math.random()).toString().slice(3, -1),
+            title: inputRef.current.value,
+        }
+
+        setProjectState(prevState => {
+            return {
+                ...prevState,
+                tasks: [...prevState.tasks, newTask],
+            }
+        })
+
+        inputRef.current.value = ""
+
+    }
+
+    function deleteProject() {
+        setProjectState(prevState => {
+            return {
+                ...prevState,
+                selectedProjectId: 'not creating',
+                projects: [...prevState.projects.filter(project => project.id !== projectState.selectedProjectId)],
+                tasks: [...prevState.tasks.filter(task => task.projectId !== projectState.selectedProjectId)],
+            }
+        })
+    }
+
+    function deleteTask(taskId) {
+        setProjectState(prevState => {
+            return {
+                ...prevState,
+                tasks: prevState.tasks
+                    .filter(task => task.id !== taskId)
+            }
+        })
+    }
+
     let selectedProject;
-    let content;
+    let selectedProjectTasks;
+
+    selectedProject = projectState.projects.filter(project => project.id === projectState.selectedProjectId)
+    selectedProjectTasks = projectState.tasks.filter(task => task.projectId === projectState.selectedProjectId)
 
     function handleSelectActiveProject(id) {
         setProjectState(prevState => {
@@ -80,9 +136,24 @@ function App() {
         })
     }
 
-    selectedProject = projectState.projects.filter(project => project.projectId === projectState.selectedProjectId)[0]
+    let uiContent
 
-    content = handleUISwitch(selectedProject, projectState, handleAddCreateProject, handleCreateProject)
+    if (projectState.selectedProjectId === 'not creating') {
+        uiContent = <NoSelectedProject
+            handleAddCreateProject={handleAddCreateProject}
+        />
+    } else if (projectState.selectedProjectId === 'creating') {
+        uiContent = <ProjectForm
+            handleCreateProject={handleCreateProject}
+            cancelCreateProject={cancelCreateProject} />
+    } else {
+        uiContent = <SelectedProject
+            selectedProject={selectedProject}
+            addTask={addTask}
+            tasks={selectedProjectTasks}
+            deleteTask={deleteTask}
+            deleteProject={deleteProject} />
+    }
 
     return (
         <>
@@ -90,10 +161,12 @@ function App() {
                 selectedProjectId={projectState.selectedProjectId}
                 projects={projectState.projects}
                 handleAddCreateProject={handleAddCreateProject}
-                handleSelectActiveProject={handleSelectActiveProject} />
+                handleSelectActiveProject={handleSelectActiveProject}
+                deleteProject={deleteProject}
+            />
 
             <main>
-                {content}
+                {uiContent}
             </main>
         </>
     )
