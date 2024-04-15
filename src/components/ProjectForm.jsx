@@ -1,6 +1,10 @@
+import { useContext } from "react"
 import { useRef, useState, useEffect } from "react"
+import { AppContext } from "../utils/AppContextPorvider"
 
-const ProjectForm = ({ handleCreateProject, cancelCreateProject }) => {
+const ProjectForm = () => {
+
+    const { handleCreateProject, cancelCreateProject } = useContext(AppContext)
 
     const projectNameRef = useRef()
     const projectDescriptionRef = useRef()

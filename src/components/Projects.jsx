@@ -1,4 +1,9 @@
-const Projects = ({ projects, selectedProjectId, handleSelectActiveProject, deleteProject }) => {
+import { useContext } from "react"
+import { AppContext } from "../utils/AppContextPorvider"
+
+const Projects = () => {
+
+    const {projects, selectedProjectId, handleSelectActiveProject, deleteProject} = useContext(AppContext)
 
     let activeClass = "project"
 

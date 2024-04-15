@@ -48,6 +48,10 @@ button {
     cursor: pointer;
 }
 
+input[type="checkbox"] {
+    cursor: pointer;
+}
+
 .button {
     font-size: 1.4rem;
     border: none;

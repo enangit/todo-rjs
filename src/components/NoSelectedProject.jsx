@@ -1,5 +1,11 @@
+import { useContext } from 'react'
 import Button from './Button'
-const NoSelectedProject = ({ handleAddCreateProject }) => {
+import { AppContext } from '../utils/AppContextPorvider'
+
+const NoSelectedProject = () => {
+
+    const { handleAddCreateProject } = useContext(AppContext)
+
     return (
         <section className='no-selected-project section'>
             <div className="div">
@@ -10,6 +16,7 @@ const NoSelectedProject = ({ handleAddCreateProject }) => {
             <Button buttonText="Create New" onClick={handleAddCreateProject} />
         </section>
     )
+
 }
 
 export default NoSelectedProject

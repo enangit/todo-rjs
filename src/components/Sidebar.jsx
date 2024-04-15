@@ -1,7 +1,11 @@
+import { useContext } from "react"
 import Button from "./Button"
 import Projects from "./Projects"
+import { AppContext } from "../utils/AppContextPorvider"
 
-const Sidebar = ({ projects, selectedProjectId, handleSelectActiveProject, handleAddCreateProject, deleteProject }) => {
+const Sidebar = () => {
+
+    const {handleAddCreateProject} = useContext(AppContext)
 
     return (
         <aside className="sidebar">
@@ -12,10 +16,6 @@ const Sidebar = ({ projects, selectedProjectId, handleSelectActiveProject, handl
                 <Button buttonText={"Add Projects"} onClick={handleAddCreateProject} />
             </div>
             <Projects
-                projects={projects}
-                selectedProjectId={selectedProjectId}
-                handleSelectActiveProject={handleSelectActiveProject}
-                deleteProject={deleteProject}
             />
 
         </aside>

@@ -1,19 +1,20 @@
-/* eslint-disable no-unused-vars */
-import { useState, useEffect } from 'react'
+import { useEffect, useReducer } from 'react'
 
 import './App.css'
 import Sidebar from './components/Sidebar'
-import NoSelectedProject from "./components/NoSelectedProject";
-import SelectedProject from "./components/SelectedProject";
-import ProjectForm from './components/ProjectForm';
+import AppContextProvider from './utils/AppContextPorvider';
+import HandleUiSwitch from './utils/HandleUiSwitch';
+
+import reducer from './utils/reducer';
 
 function App() {
 
     const savedProjects = JSON.parse(localStorage.getItem("projects"))
     const savedTasks = JSON.parse(localStorage.getItem("tasks"))
+    const savedLastSelectedProjectId = JSON.parse(localStorage.getItem("lastSelectedProjectId"))
 
-    const [projectState, setProjectState] = useState({
-        selectedProjectId: 'not creating',
+    const [state, dispatch] = useReducer(reducer, {
+        selectedProjectId: savedLastSelectedProjectId || 'not creating',
         projects: savedProjects || [],
         tasks: savedTasks || [],
     })
@@ -25,32 +26,33 @@ function App() {
             localStorage.setItem("projects", JSON.stringify(projects))
         }
 
-        saveProjectToDatabase(projectState.projects)
-    }, [projectState.projects])
+        saveProjectToDatabase(state.projects)
+    }, [state.projects])
 
     useEffect(() => {
         function saveTasksToDatabase(tasks) {
             localStorage.setItem("tasks", JSON.stringify(tasks))
         }
-        saveTasksToDatabase(projectState.tasks)
-    }, [projectState.tasks])
+        saveTasksToDatabase(state.tasks)
+    }, [state.tasks])
+
+    useEffect(() => {
+        function saveTasksToDatabase(lastSelectedProjectId) {
+            if (lastSelectedProjectId === 'not creating' || lastSelectedProjectId === 'creating') {
+                return
+            } else {
+                localStorage.setItem("lastSelectedProjectId", JSON.stringify(lastSelectedProjectId))
+            }
+        }
+        saveTasksToDatabase(state.selectedProjectId)
+    }, [state.selectedProjectId])
 
     function handleAddCreateProject() {
-        setProjectState(prevState => {
-            return {
-                ...prevState,
-                selectedProjectId: 'creating',
-            }
-        })
+        dispatch({ type: 'handleAddCreateProject' })
     }
 
     function cancelCreateProject() {
-        setProjectState(prevState => {
-            return {
-                ...prevState,
-                selectedProjectId: 'not creating',
-            }
-        })
+        dispatch({ type: 'cancelCreateProject' })
     }
 
     function handleCreateProject(inputEl) {
@@ -69,13 +71,7 @@ function App() {
             createdAt: new Date().toString(),
         }
 
-        setProjectState(prevState => {
-            return {
-                ...prevState,
-                projects: [...prevState.projects, newProject],
-                selectedProjectId: 'not creating',
-            }
-        })
+        dispatch({ type: 'handleCreateProject', payload: newProject })
 
     }
 
@@ -84,90 +80,62 @@ function App() {
         if (inputRef.current.value === "") return
 
         const newTask = {
-            projectId: projectState.selectedProjectId,
+            projectId: state.selectedProjectId,
             id: (Math.random()).toString().slice(3, -1),
             title: inputRef.current.value,
+            completed: false,
         }
 
-        setProjectState(prevState => {
-            return {
-                ...prevState,
-                tasks: [...prevState.tasks, newTask],
-            }
-        })
+        dispatch({ type: 'addTask', payload: newTask })
 
         inputRef.current.value = ""
 
     }
 
     function deleteProject() {
-        setProjectState(prevState => {
-            return {
-                ...prevState,
-                selectedProjectId: 'not creating',
-                projects: [...prevState.projects.filter(project => project.id !== projectState.selectedProjectId)],
-                tasks: [...prevState.tasks.filter(task => task.projectId !== projectState.selectedProjectId)],
-            }
-        })
+        dispatch({ type: 'deleteProject' })
     }
 
     function deleteTask(taskId) {
-        setProjectState(prevState => {
-            return {
-                ...prevState,
-                tasks: prevState.tasks
-                    .filter(task => task.id !== taskId)
-            }
-        })
+        dispatch({ type: 'deleteTask', payload: taskId })
     }
 
-    let selectedProject;
-    let selectedProjectTasks;
+    let selectedProject = state.projects.filter(project => project.id === state.selectedProjectId)
+    let selectedProjectTasks = state.tasks.filter(task => task.projectId === state.selectedProjectId)
 
-    selectedProject = projectState.projects.filter(project => project.id === projectState.selectedProjectId)
-    selectedProjectTasks = projectState.tasks.filter(task => task.projectId === projectState.selectedProjectId)
-
-    function handleSelectActiveProject(id) {
-        setProjectState(prevState => {
-            return {
-                ...prevState,
-                selectedProjectId: id,
-            }
-        })
+    function handleSelectActiveProject(projectId) {
+        dispatch({ type: 'handleSelectActiveProject', payload: projectId })
     }
 
-    let uiContent
-
-    if (projectState.selectedProjectId === 'not creating') {
-        uiContent = <NoSelectedProject
-            handleAddCreateProject={handleAddCreateProject}
-        />
-    } else if (projectState.selectedProjectId === 'creating') {
-        uiContent = <ProjectForm
-            handleCreateProject={handleCreateProject}
-            cancelCreateProject={cancelCreateProject} />
-    } else {
-        uiContent = <SelectedProject
-            selectedProject={selectedProject}
-            addTask={addTask}
-            tasks={selectedProjectTasks}
-            deleteTask={deleteTask}
-            deleteProject={deleteProject} />
+    function handleCompleteTask(taskId) {
+        dispatch({ type: 'handleCompleteTask', payload: taskId })
     }
+
+    let appContextProviderValues = {
+        selectedProject,
+        selectedProjectId: state.selectedProjectId,
+        selectedProjectTasks,
+        handleCreateProject,
+        handleAddCreateProject,
+        addTask,
+        deleteTask,
+        cancelCreateProject,
+        projects: state.projects,
+        deleteProject,
+        handleSelectActiveProject,
+        handleCompleteTask,
+    }
+
+    let content = <HandleUiSwitch />
 
     return (
         <>
-            <Sidebar
-                selectedProjectId={projectState.selectedProjectId}
-                projects={projectState.projects}
-                handleAddCreateProject={handleAddCreateProject}
-                handleSelectActiveProject={handleSelectActiveProject}
-                deleteProject={deleteProject}
-            />
-
-            <main>
-                {uiContent}
-            </main>
+            <AppContextProvider value={appContextProviderValues}>
+                <Sidebar />
+                <main>
+                    {content}
+                </main>
+            </AppContextProvider>
         </>
     )
 }

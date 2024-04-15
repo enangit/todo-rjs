@@ -1,8 +1,12 @@
 import { FaTrashCan } from "react-icons/fa6";
 import Tasks from "./Tasks"
+import { useContext } from "react";
+import { AppContext } from "../utils/AppContextPorvider";
 
-const SelectedProject = ({ selectedProject, tasks, addTask, deleteTask, deleteProject }) => {
-    console.log("selected", selectedProject)
+const SelectedProject = () => {
+
+    const { selectedProject, deleteProject } = useContext(AppContext)
+
     const date = selectedProject[0]?.createdAt.slice(0, 24)
 
     return (
@@ -45,7 +49,7 @@ const SelectedProject = ({ selectedProject, tasks, addTask, deleteTask, deletePr
 
 
             <div className="selected-project-bottom">
-                <Tasks tasks={tasks} addTask={addTask} deleteTask={deleteTask} />
+                <Tasks />
             </div>
 
         </section>
