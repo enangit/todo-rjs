@@ -1,13 +1,33 @@
 import { FaTrashCan } from "react-icons/fa6";
 import Tasks from "./Tasks"
-import { useContext } from "react";
-import { AppContext } from "../utils/AppContextPorvider";
+import { AppContext } from "../utils/ContextPorvider";
+import { createPortal } from "react-dom";
+import Modal from "./Modal";
+import { ModalContextProvider } from "../utils/ContextPorvider";
+
+import { useContext, useRef } from "react";
 
 const SelectedProject = () => {
 
     const { selectedProject, deleteProject } = useContext(AppContext)
 
     const date = selectedProject[0]?.createdAt.slice(0, 24)
+
+    const dialogRef = useRef(null)
+
+    function openModal() {
+        dialogRef.current?.showModal()
+    }
+
+    function closeModal() {
+        dialogRef.current?.close()
+    }
+
+    function proceedFunc() {
+        deleteProject()
+        dialogRef.current?.close()
+
+    }
 
     return (
         <section
@@ -33,8 +53,13 @@ const SelectedProject = () => {
                         className="action-div">
                         <button
                             className="button delete-project-button"
-                            onClick={deleteProject}
+                            onClick={
+                                () => {
+                                    openModal()
+                                }
+                            }
                         >
+
                             <FaTrashCan
                                 className="icon"
                             />
@@ -52,6 +77,19 @@ const SelectedProject = () => {
                 <Tasks />
             </div>
 
+            {
+                createPortal(
+                    <ModalContextProvider value={{ proceedFunc, closeModal }}>
+                        <Modal ref={dialogRef}>
+
+                            <p>
+                                Do you really want to delete this project?
+                            </p>
+
+                        </Modal>
+                    </ModalContextProvider>,
+                    document.getElementById("modal-root"))
+            }
         </section>
     )
 }

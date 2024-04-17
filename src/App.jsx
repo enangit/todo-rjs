@@ -1,11 +1,12 @@
-import { useEffect, useReducer } from 'react'
+import { useEffect, useReducer, } from 'react'
 
-import './App.css'
 import Sidebar from './components/Sidebar'
-import AppContextProvider from './utils/AppContextPorvider';
+import { AppContextProvider } from './utils/ContextPorvider';
 import HandleUiSwitch from './utils/HandleUiSwitch';
 
+import './App.css'
 import reducer from './utils/reducer';
+import { formatString } from "./utils/formatString"
 
 function App() {
 
@@ -82,7 +83,7 @@ function App() {
         const newTask = {
             projectId: state.selectedProjectId,
             id: (Math.random()).toString().slice(3, -1),
-            title: inputRef.current.value,
+            title: formatString(inputRef.current.value),
             completed: false,
         }
 
@@ -131,10 +132,13 @@ function App() {
     return (
         <>
             <AppContextProvider value={appContextProviderValues}>
+
                 <Sidebar />
+
                 <main>
                     {content}
                 </main>
+
             </AppContextProvider>
         </>
     )

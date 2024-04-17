@@ -1,14 +1,28 @@
-import { useRef } from "react"
 import Button from "./Button"
-import { useContext } from "react"
-import { AppContext } from "../utils/AppContextPorvider"
+import { useContext, useRef, useState, useEffect } from "react"
+import { AppContext } from "../utils/ContextPorvider"
 import { FaTrashCan } from "react-icons/fa6"
 
 const Tasks = () => {
 
     const { selectedProjectTasks: tasks, addTask, deleteTask, handleCompleteTask } = useContext(AppContext)
 
-    const taskInputRef = useRef()
+    const taskInputRef = useRef(null)
+
+    const [seletectedFilter, setSelectedFilter] = useState("all")
+    const [tasksToDisplay, setTasksToDisplay] = useState()
+
+    useEffect(() => {
+
+        if (seletectedFilter === "all") {
+            setTasksToDisplay(tasks)
+        } else {
+            setTasksToDisplay(
+                tasks.filter(task => task.completed === true)
+            )
+        }
+
+    }, [setTasksToDisplay, seletectedFilter, tasks])
 
     return (
         <section
@@ -16,7 +30,7 @@ const Tasks = () => {
 
             <label
                 htmlFor="tasks">
-                Tasks
+                {"Tasks"}
             </label>
 
             <form
@@ -33,49 +47,82 @@ const Tasks = () => {
                     }} />
             </form>
 
+            <div className="tasks-container">
+                {
+                    tasksToDisplay.length > 0 &&
+                    <div className="filter-container">
 
-            <ul
-                className="tasks"
-                id="tasks">
+                        <label htmlFor="tasks-filter">
+                            {"Filter Tasks"}
+                        </label>
+
+                        <select
+                            name="tasks-filter" id="tasks-filter"
+                            value={seletectedFilter}
+                            onChange={e => setSelectedFilter(e.target.value)}>
+
+                            <option value="all">
+                                {"All"}
+                            </option>
+
+                            <option value="completed">
+                                {"Completed"}
+                            </option>
+
+                        </select>
+
+                    </div>
+                }
 
                 {tasks.length === 0 && <p> You have no task/s on this project. </p>}
 
-                {
-                    tasks.length > 0 &&
-                    tasks?.map((task, idx) => {
-                        return (
-                            <li
-                                className={task.completed ? "task completed" : "task"}
-                                key={task.id} >
-                                <span className="numbering">
-                                    {idx + 1}.
-                                </span>
-                                <span className="task-text">{task.title}</span>
+                <ul
+                    className="tasks"
+                    id="tasks">
 
-                                <input
-                                    onClick={() => {
-                                        handleCompleteTask(task.id)
-                                    }}
-                                    type="checkbox"
-                                    name="completed"
-                                    id="completed"
-                                    className="completed" />
+                    {
+                        tasksToDisplay.length > 0 &&
+                        tasksToDisplay?.map((task, idx) => {
+                            return (
+                                <li
+                                    className={task.completed ? "task completed" : "task"}
+                                    key={task.id} >
 
-                                <button
-                                    className="delete-task-button"
-                                    id="delete-task-button"
-                                    onClick={() => { deleteTask(task.id) }}
-                                >
-                                    <FaTrashCan
-                                        className="icon"
-                                    />
-                                </button>
+                                    <span className="numbering">
+                                        {idx + 1}.
+                                    </span>
 
-                            </li>
-                        )
-                    })
-                }
-            </ul>
+                                    <span className="task-text">
+                                        {task.title}
+                                    </span>
+
+                                    <input
+                                        onClick={() => {
+                                            handleCompleteTask(task.id)
+                                        }}
+                                        type="checkbox"
+                                        name="completed"
+                                        id="completed"
+                                        className="completed" />
+
+                                    <button
+                                        className="delete-task-button"
+                                        id="delete-task-button"
+                                        onClick={() => { deleteTask(task.id) }}
+                                    >
+
+                                        <FaTrashCan
+                                            className="icon"
+                                        />
+
+                                    </button>
+
+                                </li>
+                            )
+                        })
+                    }
+                </ul>
+            </div>
 
         </section>
     )

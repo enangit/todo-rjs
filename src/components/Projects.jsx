@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { AppContext } from "../utils/AppContextPorvider"
+import { AppContext } from "../utils/ContextPorvider"
 
 const Projects = () => {
 

@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import Button from './Button'
-import { AppContext } from '../utils/AppContextPorvider'
+import { AppContext } from '../utils/ContextPorvider'
 
 const NoSelectedProject = () => {
 
