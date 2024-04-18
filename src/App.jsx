@@ -1,4 +1,4 @@
-import { useEffect, useReducer, } from 'react'
+import { useReducer, useEffect } from 'react'
 
 import Sidebar from './components/Sidebar'
 import { AppContextProvider } from './utils/ContextPorvider';
@@ -7,6 +7,7 @@ import HandleUiSwitch from './utils/HandleUiSwitch';
 import './App.css'
 import reducer from './utils/reducer';
 import { formatString } from "./utils/formatString"
+import useSaveToDatabase from './custom/useSaveToDatabase';
 
 function App() {
 
@@ -20,40 +21,23 @@ function App() {
         tasks: savedTasks || [],
     })
 
-    //useEffect to save projects and tasks to a localtStorage || database
+    //use custom hook to save projects and tasks to a localtStorage || database
+    useSaveToDatabase("projects", state.projects)
+    useSaveToDatabase("tasks", state.tasks)
 
     useEffect(() => {
-        function saveProjectToDatabase(projects) {
-            localStorage.setItem("projects", JSON.stringify(projects))
+        if ( state.selectedProjectId === 'creating') {
+            return
         }
-
-        saveProjectToDatabase(state.projects)
-    }, [state.projects])
-
-    useEffect(() => {
-        function saveTasksToDatabase(tasks) {
-            localStorage.setItem("tasks", JSON.stringify(tasks))
-        }
-        saveTasksToDatabase(state.tasks)
-    }, [state.tasks])
-
-    useEffect(() => {
-        function saveTasksToDatabase(lastSelectedProjectId) {
-            if (lastSelectedProjectId === 'not creating' || lastSelectedProjectId === 'creating') {
-                return
-            } else {
-                localStorage.setItem("lastSelectedProjectId", JSON.stringify(lastSelectedProjectId))
-            }
-        }
-        saveTasksToDatabase(state.selectedProjectId)
+        localStorage.setItem("lastSelectedProjectId", JSON.stringify(state.selectedProjectId))
     }, [state.selectedProjectId])
 
     function handleAddCreateProject() {
-        dispatch({ type: 'handleAddCreateProject' })
+        dispatch({ type: 'handleAddCreateProject', payload: "creating" })
     }
 
     function cancelCreateProject() {
-        dispatch({ type: 'cancelCreateProject' })
+        dispatch({ type: 'cancelCreateProject', payload: "not creating" })
     }
 
     function handleCreateProject(inputEl) {

@@ -1,28 +1,17 @@
 import Button from "./Button"
-import { useContext, useRef, useState, useEffect } from "react"
+import { useContext, useRef, useState } from "react"
 import { AppContext } from "../utils/ContextPorvider"
 import { FaTrashCan } from "react-icons/fa6"
+import useFilterTasks from "../custom/useFilterTasks"
 
 const Tasks = () => {
 
-    const { selectedProjectTasks: tasks, addTask, deleteTask, handleCompleteTask } = useContext(AppContext)
-
+    const { selectedProjectTasks, addTask, deleteTask, handleCompleteTask } = useContext(AppContext)
     const taskInputRef = useRef(null)
-
     const [seletectedFilter, setSelectedFilter] = useState("all")
-    const [tasksToDisplay, setTasksToDisplay] = useState()
+    const [tasksToDisplay, setTasksToDisplay] = useState(selectedProjectTasks)
 
-    useEffect(() => {
-
-        if (seletectedFilter === "all") {
-            setTasksToDisplay(tasks)
-        } else {
-            setTasksToDisplay(
-                tasks.filter(task => task.completed === true)
-            )
-        }
-
-    }, [setTasksToDisplay, seletectedFilter, tasks])
+    useFilterTasks(setTasksToDisplay, seletectedFilter, selectedProjectTasks) //filter the tasks to be displayed
 
     return (
         <section
@@ -74,7 +63,7 @@ const Tasks = () => {
                     </div>
                 }
 
-                {tasks.length === 0 && <p> You have no task/s on this project. </p>}
+                {selectedProjectTasks.length === 0 && <p> You have no task/s on this project. </p>}
 
                 <ul
                     className="tasks"

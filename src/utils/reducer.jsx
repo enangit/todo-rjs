@@ -3,12 +3,12 @@ function reducer(state, action) {
         case 'handleAddCreateProject':
             return {
                 ...state,
-                selectedProjectId: 'creating',
+                selectedProjectId: action.payload,
             }
         case 'cancelCreateProject':
             return {
                 ...state,
-                selectedProjectId: 'not creating',
+                selectedProjectId: action.payload,
             }
 
         case 'handleCreateProject':
