@@ -1,7 +1,12 @@
 #root {
     display: grid;
     grid-template-columns: 17% 83%;
+    grid-template-areas: "left right";
     height: 100%;
+}
+
+main {
+    grid-area: right;
 }
 
 main>.section {
@@ -18,7 +23,7 @@ main>.section {
     width: 100%;
     height: 100%;
     padding-block: .5rem;
-
+    grid-area: left;
     background: var(--dark-blue-200);
 }
 
@@ -316,4 +321,53 @@ dialog::backdrop {
 
 .modal .buttons .button.cancel {
     color: var(--dark-blue-500);
+}
+
+
+/* Login Form CSS */
+.login-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    grid-column-start: left;
+    grid-column-end: right;
+}
+
+.form-fieldset {
+    display: grid;
+    row-gap: 2rem;
+    width: 50%;
+    margin: 0 auto;
+    border: none;
+    border-top: 2px solid green;
+}
+
+.form-fieldset .fieldset-legend {
+    font-weight: bold;
+    letter-spacing: .1rem;
+    font-size: 3rem;
+    margin-block-end: 2rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+}
+
+.form-fieldset .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-fieldset .form-group input {
+    padding: .5rem 1rem;
+}
+
+.form-fieldset .login-btn{
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: .1rem;
+    text-transform: uppercase;
+    padding: 1rem 0;
+    display: block;
+    width: 40%;
+    margin-block-start: 1.5rem;
+    margin-inline: auto;
 }
